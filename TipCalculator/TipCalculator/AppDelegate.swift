@@ -1,0 +1,172 @@
+//
+//  AppDelegate.swift
+//  TipCalculator
+//
+//  Created by Tyler Timms on 11/13/18.
+//  Copyright © 2018 Tyler Timms. All rights reserved.
+//
+
+import UIKit
+
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
+
+    var window: UIWindow?
+
+    var tipPercent: Int? = 15
+    var theme: Int? = 0
+    var rounding:Int? = 0
+    
+    var name1: String? = ""
+    var bill1: String? = ""
+    var tip1: String? = ""
+    var total1: String? = ""
+    
+    var name2: String? = ""
+    var bill2: String? = ""
+    var tip2: String? = ""
+    var total2: String? = ""
+    
+    var name3: String? = ""
+    var bill3: String? = ""
+    var tip3: String? = ""
+    var total3: String? = ""
+
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        
+        var path = getDocumentDirStringPath()! + "/saveState.txt"
+        let fileManager = FileManager.default
+        if fileManager.fileExists(atPath: path) {
+            print("File exists")
+        } else {
+            SaveState()
+        }
+        
+        path = getDocumentDirStringPath()! + "/saveHistory.txt"
+        if fileManager.fileExists(atPath: path) {
+            print("File exists")
+            // Use an NS function, it returns an array
+            let pathsForFile = NSSearchPathForDirectoriesInDomains(
+                .documentDirectory,
+                .userDomainMask,
+                true)
+            
+            // Get the last (or first)
+            let documentDirectory = pathsForFile.last
+            
+            // Get Documents directory
+            let path = documentDirectory! + "/saveHistory.txt"
+            
+            let readDict: NSDictionary? = NSDictionary(contentsOfFile: path)
+            
+            name1 = readDict?.value(forKey: "name1") as? String
+            bill1 = (readDict?.value(forKey: "bill1") as? String)!
+            tip1 = (readDict?.value(forKey: "tip1") as? String)!
+            total1 = (readDict?.value(forKey: "total1") as? String)!
+            
+            name2 = readDict?.value(forKey: "name2") as? String
+            bill2 = (readDict?.value(forKey: "bill2") as? String)!
+            tip2 = (readDict?.value(forKey: "tip2") as? String)!
+            total2 = (readDict?.value(forKey: "total2") as? String)!
+            
+            name3 = readDict?.value(forKey: "name3") as? String
+            bill3 = (readDict?.value(forKey: "bill3") as? String)!
+            tip3 = (readDict?.value(forKey: "tip3") as? String)!
+            total3 = (readDict?.value(forKey: "total3") as? String)!
+        } else {
+            SaveHistory()
+        }
+        
+        return true
+    }
+
+    func applicationWillResignActive(_ application: UIApplication) {
+        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
+        // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
+    }
+
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        SaveState()
+        SaveHistory()
+    }
+
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
+    }
+
+    func applicationDidBecomeActive(_ application: UIApplication) {
+    }
+
+    func applicationWillTerminate(_ application: UIApplication) {
+        SaveState()
+        SaveHistory()
+    }
+    
+    func getDocumentDirStringPath() -> String? {
+        // Use an NS function, it returns an array
+        let pathsForFile = NSSearchPathForDirectoriesInDomains(
+            .documentDirectory,
+            .userDomainMask,
+            true)
+        
+        // Get the last (or first)
+        let documentDirectory = pathsForFile.last
+        
+        return documentDirectory
+    }
+    
+    // saves state information in dictionary in document dir.
+    func SaveState() {
+        // Get Documents directory
+        let path = getDocumentDirStringPath()! + "/saveState.txt"
+        print("\(path)")
+        
+        
+        // Create a dictionary for app state information
+        let dict: NSDictionary = [
+                "tipPercent"  : tipPercent!,
+                "theme" : theme!,
+                "rounding" : rounding!
+            ]
+        
+        // Write dictionary
+        let success = dict.write(toFile: path, atomically: true)
+        if !success {
+            // Write failed
+            print("Failed to write the dictionary to disk")
+            return
+        }
+    }
+    
+    func SaveHistory(){
+        // Get Documents directory
+        let path2 = getDocumentDirStringPath()! + "/saveHistory.txt"
+        print("\(path2)")
+
+        // Create a dictionary for app state information
+        let dict: NSDictionary = [
+            "name1"  : name1!,
+            "bill1" : bill1!,
+            "tip1" : tip1!,
+            "total1" : total1!,
+            "name2"  : name2!,
+            "bill2" : bill2!,
+            "tip2" : tip2!,
+            "total2" : total2!,
+            "name3"  : name3!,
+            "bill3" : bill3!,
+            "tip3" : tip3!,
+            "total3" : total3!,
+        ]
+        
+        // Write dictionary
+        let success = dict.write(toFile: path2, atomically: true)
+        if !success {
+        // Write failed
+        print("Failed to write the dictionary to disk")
+        return
+        }
+    }
+
+}
+
